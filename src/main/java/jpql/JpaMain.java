@@ -17,17 +17,16 @@ public class JpaMain {
             member.setAge(20);
             em.persist(member);
 
-//            TypedQuery<Member> query = em.createQuery("select m from Member m where m.username = :username", Member.class);
-//            query.setParameter("username", "chloe");
-//            Member singleResult = query.getSingleResult();
+            em.flush();
+            em.clear();
 
-            TypedQuery<Member> query = em.createQuery("select m from Member m where m.username = ?1", Member.class);
-            query.setParameter(1, "chloe");
-            Member singleResult = query.getSingleResult();
+            List<MemberDTO> resultList = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class).getResultList();
 
-            System.out.println("singleResult = "+ singleResult);
-
+            for(MemberDTO memberDTO : resultList) {
+                System.out.println("username : "+ memberDTO.getUsername() +" / age : "+ memberDTO.getAge());
+            }
             tx.commit();
+
         } catch (Exception e) {
             tx.rollback();
             e.printStackTrace();
