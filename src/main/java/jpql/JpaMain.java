@@ -17,9 +17,10 @@ public class JpaMain {
             em.persist(team);
 
             Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(30);
-            member.changeTeam(team);
+            member.setUsername(null);
+            member.setAge(9);
+            member.setType(MemberType.ADMIN);
+            member.setTeam(team);
 
             em.persist(member);
 
@@ -27,12 +28,34 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select m from Member m, Team t where m.username = t.name";
-            List<Member> resultList = em.createQuery(query, Member.class)
+            // CASE
+//            String query =
+//                    "select"+
+//                    "   case when m.age <= 10 then '학생요금'" +
+//                    "        when m.age >= 60 then '경로요금'" +
+//                    "        else '일반요금'" +
+//                    "   end " +
+//                    "from Member m";
+//            List<String> resultList = em.createQuery(query, String.class)
+//                    .getResultList();
+//
+
+            // COALESCE
+//            String query =
+//                    "select coalesce(m.username, 'Unknown') from Member m";
+//            List<String> resultList = em.createQuery(query, String.class)
+//                    .getResultList();
+
+            // NULLIF
+            String query =
+                    "select nullif(m.username, '관리자') from Member m";
+            List<String> resultList = em.createQuery(query, String.class)
                     .getResultList();
 
+            for(String s : resultList) {
+                System.out.println("s : "+ s);
+            }
             tx.commit();
-
         } catch (Exception e) {
             tx.rollback();
             e.printStackTrace();

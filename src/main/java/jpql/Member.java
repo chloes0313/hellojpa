@@ -22,6 +22,9 @@ public class Member {
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
+    @Enumerated(EnumType.STRING)
+    private MemberType type;
+
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
