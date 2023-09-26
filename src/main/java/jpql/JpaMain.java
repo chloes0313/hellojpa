@@ -1,6 +1,7 @@
 package jpql;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 public class JpaMain {
@@ -36,13 +37,14 @@ public class JpaMain {
             em.clear();
 
             String query =
-                    "select group_concat(m.username) from Member m";
+                    "select m.username FROM Team t join t.members m";
             List<String> resultList = em.createQuery(query, String.class)
                     .getResultList();
 
             for(String s : resultList) {
-                System.out.println("s : "+ s);
+                System.out.println("member : " + s);
             }
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Entity
-@ToString
+@ToString(exclude = "team")
 public class Member {
     @Id @GeneratedValue
     private long id;
@@ -25,12 +25,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberType type;
 
-    @OneToMany(mappedBy = "member")
-    private List<Order> orders = new ArrayList<>();
+//    @OneToMany(mappedBy = "member")
+//    private List<Order> orders = new ArrayList<>();
 
-    public void changeTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
-    }
+//    public void changeTeam(Team team) {
+//        this.team = team;
+//        team.getMembers().add(this);
+//    }
 
 }
