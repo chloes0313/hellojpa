@@ -13,36 +13,69 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
+            Team teamB = new Team();
+            teamB.setName("teamB");
+            em.persist(teamB);
 
-            Member member = new Member();
-            member.setUsername("Chloeseong");
-            member.setAge(9);
-            member.setType(MemberType.ADMIN);
-            member.setTeam(team);
-
-            em.persist(member);
+            Member member1 = new Member();
+            member1.setUsername("Member-1");
+            member1.setAge(33);
+            member1.setType(MemberType.ADMIN);
+            member1.setTeam(teamA);
+            em.persist(member1);
 
             Member member2 = new Member();
-            member2.setUsername("Eunyoung");
-            member2.setAge(9);
-            member2.setType(MemberType.ADMIN);
-            member2.setTeam(team);
-
+            member2.setUsername("Member-2");
+            member2.setAge(10);
+            member2.setType(MemberType.USER);
+            member2.setTeam(teamA);
             em.persist(member2);
+
+            Member member3 = new Member();
+            member3.setUsername("Member-3");
+            member3.setAge(60);
+            member3.setType(MemberType.USER);
+            member3.setTeam(teamB);
+            em.persist(member3);
+
+            Member member4 = new Member();
+            member4.setUsername("Member-4");
+            member4.setAge(60);
+            member4.setType(MemberType.USER);
+            em.persist(member4);
 
             em.flush();
             em.clear();
 
-            String query =
-                    "select m.username FROM Team t join t.members m";
-            List<String> resultList = em.createQuery(query, String.class)
+            //일반 조인
+            // -> 회원1, 팀A (SQL > 영속성 컨텍스트 등록)
+            // -> 회원2, 팀A (1차 캐시)
+            // -> 회원3, 팀B (SQL > 영속성 컨텍스트 등록)
+            // ... 회원 100 -> N+1 문제 발생
+//            String query = "select m from Member m";
+
+            //페치 조인
+//            String query = "select m from Member m join fetch m.team";
+//            List<Member> resultList = em.createQuery(query, Member.class)
+//                    .getResultList();
+//
+//            for(Member s : resultList) {
+//                System.out.println("member : " + s.getUsername() + ", " + s.getTeam().getName());
+//            }
+            
+            //컬렉션 페치 조인
+            String query = "select distinct t from Team t join fetch t.members";
+            List<Team> resultList = em.createQuery(query, Team.class)
                     .getResultList();
 
-            for(String s : resultList) {
-                System.out.println("member : " + s);
+            for(Team team : resultList) {
+                System.out.println("teamname : " + team.getName() + ", team : " + team);
+                for(Member member : team.getMembers()) {
+                    System.out.println(" -> username : " + member.getUsername() + " , member : " + member);
+                }
             }
 
             tx.commit();
