@@ -67,14 +67,17 @@ public class JpaMain {
 //            }
             
             //컬렉션 페치 조인
-            String query = "select distinct t from Team t join fetch t.members";
+//            String query = "select disticnt t from Team t join fetch t.members where t.name='teamA'";
+            String query = "select t from Team t ";
             List<Team> resultList = em.createQuery(query, Team.class)
+                    .setFirstResult(0)
+                    .setMaxResults(2)
                     .getResultList();
-
+            System.out.println("-- result size : " + resultList.size());
             for(Team team : resultList) {
-                System.out.println("teamname : " + team.getName() + ", team : " + team);
+                System.out.println("team : " + team.getName() + ", members : " + team.getMembers().size());
                 for(Member member : team.getMembers()) {
-                    System.out.println(" -> username : " + member.getUsername() + " , member : " + member);
+                    System.out.println(" -> member = " + member);
                 }
             }
 
