@@ -49,36 +49,20 @@ public class JpaMain {
 
             em.flush();
             em.clear();
+            //엔티티 직접 사용 : 기본키값
+//            String query = "select m from Member m where m.id = :memberId";
+//            Member findMember = em.createQuery(query, Member.class)
+//                    .setParameter("memberId", member1.getId())
+//                    .getSingleResult();
 
-            //일반 조인
-            // -> 회원1, 팀A (SQL > 영속성 컨텍스트 등록)
-            // -> 회원2, 팀A (1차 캐시)
-            // -> 회원3, 팀B (SQL > 영속성 컨텍스트 등록)
-            // ... 회원 100 -> N+1 문제 발생
-//            String query = "select m from Member m";
-
-            //페치 조인
-//            String query = "select m from Member m join fetch m.team";
-//            List<Member> resultList = em.createQuery(query, Member.class)
-//                    .getResultList();
-//
-//            for(Member s : resultList) {
-//                System.out.println("member : " + s.getUsername() + ", " + s.getTeam().getName());
-//            }
-            
-            //컬렉션 페치 조인
-//            String query = "select disticnt t from Team t join fetch t.members where t.name='teamA'";
-            String query = "select t from Team t ";
-            List<Team> resultList = em.createQuery(query, Team.class)
-                    .setFirstResult(0)
-                    .setMaxResults(2)
+            //엔티티 직접 사용 : 외래키값
+            String query = "select m from Member m where m.team = :team";
+            List<Member> findMembers = em.createQuery(query, Member.class)
+                    .setParameter("team", teamA)
                     .getResultList();
-            System.out.println("-- result size : " + resultList.size());
-            for(Team team : resultList) {
-                System.out.println("team : " + team.getName() + ", members : " + team.getMembers().size());
-                for(Member member : team.getMembers()) {
-                    System.out.println(" -> member = " + member);
-                }
+
+            for (Member m : findMembers) {
+                System.out.println("-- member : " + m );
             }
 
             tx.commit();
