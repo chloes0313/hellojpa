@@ -49,16 +49,10 @@ public class JpaMain {
 
             em.flush();
             em.clear();
-            //엔티티 직접 사용 : 기본키값
-//            String query = "select m from Member m where m.id = :memberId";
-//            Member findMember = em.createQuery(query, Member.class)
-//                    .setParameter("memberId", member1.getId())
-//                    .getSingleResult();
 
-            //엔티티 직접 사용 : 외래키값
-            String query = "select m from Member m where m.team = :team";
-            List<Member> findMembers = em.createQuery(query, Member.class)
-                    .setParameter("team", teamA)
+            String query = "Member.findByUsername";
+            List<Member> findMembers = em.createNamedQuery(query, Member.class)
+                    .setParameter("username", member1.getUsername())
                     .getResultList();
 
             for (Member m : findMembers) {

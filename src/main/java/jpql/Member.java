@@ -9,6 +9,10 @@ import java.util.List;
 
 @Data
 @Entity
+@NamedQuery(
+        name = "Member.findByUsername",
+        query = "select m from Member m where m.username = :username"
+)
 @ToString(exclude = "team")
 public class Member {
     @Id @GeneratedValue
