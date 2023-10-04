@@ -47,17 +47,17 @@ public class JpaMain {
             member4.setType(MemberType.USER);
             em.persist(member4);
 
-            em.flush();
+            //flush 자동 호출( -> DB 직접 반영)
+            String query = "update Member m set m.age = 20 where m.age >= 60";
+            int resultCount = em.createQuery(query)
+                    .executeUpdate();
+            // 영속성 컨텍스트 갱신 전 조회(age : 60)
+            Member findMember = em.find(Member.class, member3.getId());
+            System.out.println("-- findMember : " + findMember );
+            // 영속성 컨텍스트 초기화 후 재 조회
             em.clear();
-
-            String query = "Member.findByUsername";
-            List<Member> findMembers = em.createNamedQuery(query, Member.class)
-                    .setParameter("username", member1.getUsername())
-                    .getResultList();
-
-            for (Member m : findMembers) {
-                System.out.println("-- member : " + m );
-            }
+            findMember = em.find(Member.class, member3.getId());
+            System.out.println("-- findMemberAfter : " + findMember );
 
             tx.commit();
         } catch (Exception e) {
